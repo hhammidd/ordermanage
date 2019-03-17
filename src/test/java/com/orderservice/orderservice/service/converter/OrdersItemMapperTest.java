@@ -1,10 +1,12 @@
 package com.orderservice.orderservice.service.converter;
 
 
+import com.orderservice.orderservice.service.SampleCreationUtil;
 import com.orderservice.orderservice.web.dto.OrdersItemTo;
 import com.orderservice.orderservice.model.dbEntity.Orders;
 import com.orderservice.orderservice.model.dbEntity.OrdersItem;
 import com.orderservice.orderservice.model.dbEntity.Production;
+import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -29,42 +31,22 @@ public class OrdersItemMapperTest {
     @Test
     public void convertToDtoTest() {
 
-        ordersItemTo.setId(1L);
-        ordersItemTo.setProductionId(5);
-        ordersItemTo.setQuantity(100);
+        ordersItem = SampleCreationUtil.createOrderItem();
 
-        ordersItem.setId(1L);
-        Orders orders = new Orders();
-        orders.setId(1L);
-        ordersItem.setOrders(null);
-        Production production = new Production();
-        production.setId(5L);
-        ordersItem.setProduction(production);
-        ordersItem.setQuantity(100);
+        assertEquals(new Long(1), oim.convertToDto(ordersItem).getId());
+        assertEquals(5, oim.convertToDto(ordersItem).getProductionId());
+        assertEquals(100.00, oim.convertToDto(ordersItem).getQuantity(), 0.01);
 
-        OrdersItemTo ordersItemToAfter = oim.convertToDto(ordersItem);
-        assertEquals(ordersItemTo.getId(), ordersItemToAfter.getId());
-        assertEquals(ordersItemTo.getProductionId(), ordersItemToAfter.getProductionId());
     }
 
     @Test
     public void convertToDomainTest() {
 
-        ordersItem.setId(1L);
-        ordersItem.setQuantity(120);
-        Orders orders = new Orders();
-        orders.setId(2L);
-        ordersItem.setOrders(orders);
-        Production production = new Production();
-        production.setId(3L);
-        ordersItem.setProduction(production);
+        ordersItemTo = SampleCreationUtil.createOrderItemTo();
 
-        ordersItemTo.setId(1L);
-        ordersItemTo.setQuantity(120);
-        ordersItemTo.setProductionId(3);
+        assertEquals(new Long(1), oim.convertToDomain(ordersItemTo).getId());
+        assertEquals(new Long(1), oim.convertToDomain(ordersItemTo).getProduction().getId());
+        assertEquals(200, oim.convertToDomain(ordersItemTo).getQuantity(), 0.01);
 
-        OrdersItem ordersItemAfter = oim.convertToDomain(ordersItemTo);
-        assertEquals(ordersItem.getId(), ordersItemAfter.getId());
-        assertEquals(ordersItem.getProduction().getId(), ordersItemAfter.getProduction().getId());
     }
 }

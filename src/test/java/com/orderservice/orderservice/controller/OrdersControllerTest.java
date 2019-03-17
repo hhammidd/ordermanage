@@ -6,11 +6,14 @@ import com.orderservice.orderservice.web.dto.OrdersItemTo;
 import com.orderservice.orderservice.web.dto.output.OrdersTo;
 import com.orderservice.orderservice.api.OrdersService;
 
+import org.hamcrest.core.IsNull;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.internal.matchers.Null;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.cache.support.NullValue;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.web.servlet.MockMvc;
@@ -24,6 +27,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 
+import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -45,27 +49,21 @@ public class OrdersControllerTest {
 
     @Test
     public void testGetOrdersById() throws Exception {
-        OrdersTo mockOrdersTo = new OrdersTo();
-        List<OrdersItemTo> mockOrdersItemToList = new ArrayList<>();
-        OrdersItemTo mockOrderItemTo = new OrdersItemTo();
 
-        mockOrderItemTo.setId(2L);
-        mockOrderItemTo.setProductionId(4);
-        mockOrderItemTo.setQuantity(22);
-        mockOrdersItemToList.add(mockOrderItemTo);
+        OrdersTo mockOrdersTo = new OrdersTo();
 
         mockOrdersTo.setId(11L);
         mockOrdersTo.setCustomerId(10L);
         Date date = DATE_FORMAT.parse("2017-01-01");
         mockOrdersTo.setRegistrationDate(date);
-        mockOrdersTo.setOrdersItems(mockOrdersItemToList);
+        mockOrdersTo.setOrdersItems(null);
 
         when(ordersService.getById(anyLong())).thenReturn(mockOrdersTo);
         mockMvc.perform(get("/orders/2"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.customerId", is(10)))
-                .andExpect(jsonPath("$.ordersItems[0].productionId", is(4)))
-                .andExpect(jsonPath("$.ordersItems[0].quantity", is(22.0)));
+                .andExpect(jsonPath("$.registrationDate", is("2016-12-31T23:00:00.000+0000")))
+                .andExpect(jsonPath("$.ordersItems").value(IsNull.nullValue()));
     }
 
     @Test

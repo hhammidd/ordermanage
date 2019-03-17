@@ -1,6 +1,7 @@
 package com.orderservice.orderservice.service.converter;
 
 
+import com.orderservice.orderservice.service.SampleCreationUtil;
 import com.orderservice.orderservice.web.dto.output.OrdersTo;
 import com.orderservice.orderservice.model.dbEntity.Customer;
 import com.orderservice.orderservice.model.dbEntity.Orders;
@@ -30,47 +31,27 @@ public class OrdersMapperTest {
 
     @Test
     public void convertToDtoTest() throws Exception {
-        ordersTo.setId(11L);
-        ordersTo.setCustomerId(10L);
+
         Date date = DATE_FORMAT.parse("2017-01-01");
-        ordersTo.setRegistrationDate(date);
-        ordersTo.setOrdersItems(null);
+        orders = SampleCreationUtil.createOrders();
 
-        orders.setId(11L);
-        orders.setRegistrationDate(date);
-        Customer customer = new Customer();
-        customer.setId(10L);
-        customer.setUsername("francesco");
-        customer.setPhoneNo("23332332");
-        orders.setCustomer(customer);
+        OrdersTo convetedDto = om.convertToDto(orders);
+        assertEquals(new Long(10), convetedDto.getCustomerId());
+        assertEquals( date, convetedDto.getRegistrationDate());
+        assertEquals(new Long(11), convetedDto.getId());
+        assertNull(convetedDto.getOrdersItems());
 
-        OrdersTo ordersToAfter = om.convertToDto(orders);
-        assertEquals(ordersTo.getCustomerId(), ordersToAfter.getCustomerId());
-        assertEquals(ordersTo.getRegistrationDate(), ordersToAfter.getRegistrationDate());
-        assertEquals(ordersTo.getId(), ordersToAfter.getId());
     }
 
 
     @Test
     public void convertToDomainTest() throws Exception {
 
-        ordersTo.setId(11L);
-        ordersTo.setCustomerId(10L);
-        Date date = DATE_FORMAT.parse("2017-01-01");
-        ordersTo.setRegistrationDate(date);
-        ordersTo.setOrdersItems(null);
-
-        orders.setId(11L);
-        orders.setRegistrationDate(date);
-
-        Customer customer = new Customer();
-        customer.setId(10L);
-        orders.setCustomer(customer);
+        ordersTo = SampleCreationUtil.createOrdersTo();
 
         Orders ordersAfter = om.convertToDomain(ordersTo);
-        assertEquals(orders.getCustomer().getId(), ordersAfter.getCustomer().getId());
-        assertEquals(orders.getId(), ordersAfter.getId());
+        assertEquals(new Long(11), ordersAfter.getId());
+        assertEquals(new Long(10), ordersAfter.getCustomer().getId());
+        assertNull(ordersAfter.getRegistrationDate());
     }
-
-
 }
