@@ -18,20 +18,16 @@ public class OrdersItemMapperTest {
 
     private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd");
     private static OrdersItemMapper oim;
-    private static OrdersItem ordersItem;
-    public static OrdersItemTo ordersItemTo;
 
     @BeforeClass
     public static void startup() {
         oim = new OrdersItemMapper();
-        ordersItem = new OrdersItem();
-        ordersItemTo = new OrdersItemTo();
     }
 
     @Test
     public void convertToDtoTest() {
 
-        ordersItem = SampleCreationUtil.createOrderItem();
+        OrdersItem ordersItem = SampleCreationUtil.createOrderItem();
 
         assertEquals(new Long(1), oim.convertToDto(ordersItem).getId());
         assertEquals(5, oim.convertToDto(ordersItem).getProductionId());
@@ -42,7 +38,7 @@ public class OrdersItemMapperTest {
     @Test
     public void convertToDomainTest() {
 
-        ordersItemTo = SampleCreationUtil.createOrderItemTo();
+        OrdersItemTo ordersItemTo = SampleCreationUtil.createOrderItemTo();
 
         assertEquals(new Long(1), oim.convertToDomain(ordersItemTo).getId());
         assertEquals(new Long(1), oim.convertToDomain(ordersItemTo).getProduction().getId());
